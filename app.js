@@ -1,13 +1,19 @@
 const express = require('express')
+const bodyparser = require('body-parser')
 const mongoose = require('mongoose')
-const dotenv = require ('dotenv')
+mongoose.set('strictQuery', false);
+const cors = require("cors");
+const dotenv = require("dotenv");
+const app = express()
 
-const app = express();
-dotenv.config();
-const port = 3000;
 
 
+app.use(cors());
 app.use(express.json());
+dotenv.config();
+
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: true }));
 
 mongoose
     .connect(process.env.DB_CONNECTION, {
@@ -21,6 +27,9 @@ mongoose
         console.error("Error connecting to mongo", err);
     });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+app.use("/api", require("./routes/router"));
+
+
+ app.listen(3000, () => {
+  console.log('server up and running')
+ })
